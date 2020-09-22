@@ -18,7 +18,7 @@ const Produto = mongoose.model("Produto");
 //EndPoints 
 
     //cadastros
-    app.post("/produto",(req, res) => {
+    app.post("/registrar",(req, res) => {
 
         if( req.body.nome != undefined &&
             req.body.preco != undefined &&
@@ -50,6 +50,53 @@ const Produto = mongoose.model("Produto");
             }
     });
 
+    //listagem geral
+    app.get("/produtos", (req,res) =>{
+        Produto.find({},(erro, dados)=>{
+            if(erro){
+                res.statusCode = 417
+                res.send();
+            }
+
+            res.json(dados);
+        })
+    });
+
+    //listagem por id
+
+    app.get("/produto/:id",(req,res) =>{
+        Produto.findById(req.params.id).then((produto) =>{
+            res.statusCode= 200;
+            res.json(produto);
+        }).catch((erro) =>{
+            if(erro){
+                res.statusCode = 417
+                res.send();
+                throw erro;
+                
+            }
+            
+        });
+    });
+
+    //remover itens
+    app.delete("/remove/:id",(req,res) => {
+        Produto.findByIdAndRemove(req.params.id).then((produto)=>{
+            if(produto){
+                res.statusCode = 200
+                res.send();
+            }else{
+                res.statusCode = 404
+                res.send();
+            }
+        }).catch((errp) =>{
+            if(erro){
+                res.statusCode = 417;
+                res.send();
+                throw erro;
+            }
+        });
+    })
 
 app.listen(8080,() =>{
     console.log("API rodando");
